@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+// Definição do modelo para os tipos de veículos
+model TipoVeiculo {
+  id       String    @id @default(uuid())
+  nome     String
+  veiculos Veiculo[]
+}
+
+// Definição do modelo para as marcas dos veículos
+model Marca {
+  id      String   @id @default(uuid())
+  nome    String
+  modelos Modelo[]
+}
+
+// Definição do modelo para os modelos dos veículos
+model Modelo {
+  id       String    @id @default(uuid())
+  nome     String
+  marca    Marca     @relation(fields: [marcaId], references: [id])
+  marcaId  String // Alterado o tipo de dados para corresponder ao tipo de dados do campo 'id' em 'Marca'
+  veiculos Veiculo[]
+}
+
+// Definição do modelo para os veículos
+model Veiculo {
+  id       String      @id @default(uuid())
+  ano      Int
+  placa    String      @unique
+  tipo     TipoVeiculo @relation(fields: [tipoId], references: [id])
+  tipoId   String // Alterado o tipo de dados para corresponder ao tipo de dados do campo 'id' em 'TipoVeiculo'
+  modelo   Modelo      @relation(fields: [modeloId], references: [id])
+  modeloId String // Alterado o tipo de dados para corresponder ao tipo de dados do campo 'id' em 'Modelo'
+}
+
